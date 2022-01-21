@@ -1,37 +1,48 @@
-const Discord = require('discord.js');
 const config = require('./config.json');
-
+const fs = require("fs")
+const Discord = require('discord.js');
 const client = new Discord.Client();
+client.commands = new Discord.Collection();
 
-client.on('ready', () => {
-    console.log(`Bot is ready as ${client.user.tag}`);
-    client.user.setStatus('dnd');
+//PREFIX
 
-    console.log(client.user.presence.status);
+let prefix = "plei!"
+
+//HANDLER
+
+client.commands = new Discord.Collection();
+const commandFiles = fs.readdirSync("./comandos").filter(file =>file.endsWith(".js"));
+
+for (const file of commandFiles){
+  const commands = require(`./comandos/${file}`);
+  client.commands.set(commands.name, commands)
+} 
+
+
+//EVENTO MENSAJE
+
+client.on("message", (message) => {
+
+    if(!message.content.startsWith(prefix))
+    if (message.author.bot) return;
     
-    //const testChannel = client.channels.find(channel => channel.name === 'test');
-    //console.log(testChannel);
-});
+    let usuario = message.mentions.members.first() || message.member;
+    const args = message.content.slice(prefix.length).trim().split(/ +/g);
+    //const command = args.shift().toLowerCase();
+    const command = message.content.toLowerCase();
 
-
-client.on('message', (message) => {
-    console.log(message.content);
-    if (message.content === 'ping') {
-        message.reply('pong');
+    
+    //HANDLER
+    
+    let cmd = client.commands.find((c) => c.name === command || c.alias && c.alias.includes(command));
+    if (cmd){
+      cmd.execute(client, message, args)
     }
-    if (message.content === 'hello') {
-        message.channel.send(`hello ${message.author}!`);
-    }
-    if(message.content.includes('!test')) {
-        message.channel.send(`Glad your are testing`);
-    }
-    if (message.content === '!Plei') {
-        message.channel.send(`http://youtube.com`);
-        message.channel.send(`http://youtube.com`);
-    }
-
-});
+    
+    }); 
 
 
 
-client.login(config.BOT_TOKEN);
+client.login(config.BOT_TOKEN); 
+
+

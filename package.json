@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/antandbar/discordbot#readme",
   "dependencies": {
-    "discord.js": "^11.4.2"
+    "discord.js": "^12.5.3",
+    "fs": "^0.0.1-security",
+    "megadb": "^3.4.0"
   },
   "devDependencies": {
     "nodemon": "^2.0.15"
