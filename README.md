@@ -9,7 +9,7 @@ npm install
 In production:
 
 ```sh
-npm start
+
 ```
 
 In development:
